@@ -638,6 +638,53 @@
       form.reset();
       form.classList.remove('was-validated');
     });
+
+
+const form = document.getElementById('contactForm');
+const msg  = document.getElementById('formMsg');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  if (!form.checkValidity()) {
+    form.classList.add('was-validated');
+    return;
+  }
+
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true; btn.innerText = 'Sending...';
+
+  const formData = new FormData();
+  formData.append('name',    document.getElementById('name').value.trim());
+  formData.append('email',   document.getElementById('email').value.trim());
+  formData.append('subject', document.getElementById('subject').value.trim());
+  formData.append('message', document.getElementById('message').value.trim());
+  formData.append('agree',   document.getElementById('agree').checked ? 'on' : '');
+
+  try {
+    const res  = await fetch('contact/send-mail.php', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    msg.className = 'alert mt-3';
+    if (data.ok) {
+      msg.classList.add('alert-success');
+      form.reset();
+      form.classList.remove('was-validated');
+    } else {
+      msg.classList.add('alert-danger');
+    }
+    msg.textContent = data.msg;
+    msg.classList.remove('d-none');
+  } catch (err) {
+    msg.className = 'alert mt-3 alert-danger';
+    msg.textContent = 'Network error. Please try again.';
+    msg.classList.remove('d-none');
+  } finally {
+    btn.disabled = false; btn.innerText = 'Send Message';
+  }
+});
+
   </script>
 </body>
 </html>
+
