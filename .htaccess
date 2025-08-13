@@ -1,0 +1,18 @@
+# Simple, safe defaults
+Options -Indexes -Multiviews
+
+# Make index.php the default
+DirectoryIndex index.php index.html
+
+# If your app uses pretty URLs, keep this block; otherwise you can omit it
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  # Don’t rewrite existing files/folders
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Send everything else to index.php
+  RewriteRule ^ index.php [L]
+</IfModule>
